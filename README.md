@@ -91,6 +91,26 @@ C++本身允许多继承，也可以通过虚基类来避免多继承的一些�
 
 [More](./c++/doc/traits.md)
 
-### III. Python中的hasTraits
+
+### III. Python中的hasTrait
+
+trait为Python对象的属性增加了类型定义的功能，此外还提供了如下的额外功能：
+
+* 初始化：每个trait属性都定义有自己的缺省值，这个缺省值用来初始化属性
+
+* 验证：基于trait的属性都有明确的类型定义，只有满足定义的值才能赋值给属性
+
+* 委托：trait属性的值可以委托给其他对象的属性
+
+* 监听：trait属性的值的改变可以触发指定的函数的运行
+
+* 可视化：拥有trait属性的对象可以很方便地提供一个用户界面交互式地改变trait属性的值
+
+为了匹配自己的语言特点，不同的语言对Trait的实现互不相同，Python的HasTrait使用了委托的方式。
+
+HasTrait的特点：
+
+由于HasTrait相互独立且代码量少，所以容易理解、维护和检测。并且HasTrait提供了一种解决菱形继承的方案，因为实际上Trait没有使用继承。
+
 
 [More](./python/doc/python.md)
