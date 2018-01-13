@@ -10,7 +10,7 @@ trait为Python对象的属性增加了类型定义的功能，此外还提供了
 
 ## About Traits
 
-Traits are classes which contain methods that can be used to extend other classes, similar to mixins, with exception that traits do not useinheritance. Instead, traits are composed into other classes. That is;methods, properties and internal state are copied to master object.
+Traits are classes which contain methods that can be used to extend other classes, similar to mixins, with exception that traits do not use inheritance. Instead, traits are composed into other classes. That is;methods, properties and internal state are copied to master object.
 
 The point is to improve code reusability by dividing code into simplebuilding blocks that can be then combined into actual classes.
 
@@ -25,3 +25,80 @@ The dynamic nature of traits enables some interesting use cases that are unreach
 For example, there is feature you would need from framework someone else has written. Only thing to do is to write traits for those classes that needs to be updated and extend them. After extending the classes, framework will behave based on those extended classes. Or if there is need to alter the behavior only some specific situation (or you just want to be careful), instances of classes can be extended only.
 
 Other example would be a situation, where you discover a bug in 3rd party framework. Now you can create own solution safely, while waiting for the official patch to appear. Updating the framework code won’t override your extensions as they are applied dynamically. Your changes are only removed when you don’t need them anymore.
+
+# Diamond Problem
+
+python的hastrait提供了一种由用户自定义的解决菱形继承问题。
+
+```python
+class GrandParent(HasTraits):
+    last_name = Str('Wang')
+
+
+class Father(HasTraits):
+    age = Int
+
+    father = Instance(GrandParent)
+    last_name = Delegate('father')
+
+    def _age_changed(self, old, new):
+        print 'Age changed from %s to %s ' % (old, new)
+
+
+class Mother(HasTraits):
+    age = Int
+    first_name = Str('Zhang')
+
+    father = Instance(GrandParent)
+    last_name = Delegate('father')
+
+
+class Son(HasTraits):
+    hobby = Str('computer')
+
+    father = Instance(Father)
+    mother = Instance(Mother)
+
+    last_name = Delegate('father')
+    first_name = Delegate('mother')
+```
+
+从以上代码可以看到，Father和Mother的lastname都继承于GrandParent类，son类的fisrtname继承与于mother，lastname继承于Father。
+
+```python
+gp = GrandParent()
+f = Father()
+m = Mother()
+s = Son()
+
+f.father = gp
+m.father = gp
+
+
+s.father = f
+s.mother = m
+```
+
+从这段代码可以看到，他们的成员变量lastname都来自同一个GrandParent的对象。
+
+如果用以下代码的话，lastname来自不同的GrandParent对象。
+
+```python
+gp1 = GrandParent()
+gp2 = GrandParent()
+f = Father()
+m = Mother()
+s = Son()
+
+f.father = gp1
+m.father = gp2
+
+
+s.father = f
+s.mother = m
+```
+
+这种方式虽然麻烦但是对于程序员来说是显式的。
+
+
+
