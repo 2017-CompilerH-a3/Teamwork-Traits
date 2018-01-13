@@ -1,17 +1,3 @@
-## c++中的traits（用在STL中）
-```
-template <typename T>  
-struct TraitsHelper {  
-     static const bool isPointer = false;  
-};  
-template <typename T>  
-struct TraitsHelper<T*> {  
-     static const bool isPointer = true;  
-}; 
-``` 
-第一个结构体的功能是定义所有TraitsHelper中isPointer的默认值都是false，而第二个结构体的功能是当模板类型T为指针时，isPointer的值为true。也就是说我们可以如下来判断当前类型：
-TraitsHelper<int>::isPointer值为false， 可以得出当前类型int非指针类型
-TraitsHelper<int*>::isPointer值为true， 可以得出当前类型int*为指针类型
 
 ## php中
 
