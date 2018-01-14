@@ -157,28 +157,24 @@ C++的type traits不是语言特性，而是一种翻译时语用技巧，也就
 
 ```C++
 template <typename T>
-struct is_void
+struct my_is_void
 {
     static const bool value = false;
 };
 template <>
-struct is_void<void>
+struct my_is_void<void>
 {
     static const bool value = true;
 };
 
 template<class T>
 T* make_array(size_t size) {
-	if( is_void<T>::value==true ) {
-		std::cout<<"Error! Cannot make array of void!";
-	}
-	else {
-		return new T[size];
-	}
+	static_assert( !my_is_void<T>::value );
+	return new T[size];
 }
 ```
 
-假设我们要写个通用的创建数组的函数，然而我们不能创建void的数组。C++在没有typeid之前，我们也不可以直接typeid(T)==typeid(void)，就算有，这也是运行时决定，不可被优化(上述的模板展开后编译器可以优化掉if语句)。虽然上述程序可以通过对make_array来进行是否是void的特化，不过如果有很多个模板函数，使用is_void会方便很多。
+假设我们要写个通用的创建数组的函数，然而我们不能创建void的数组。C++在没有typeid之前，我们也不可以直接typeid(T)==typeid(void)，就算有，这也是运行时决定，不可被优化。虽然上述程序可以通过对make_array来进行是否是void的特化，不过如果有很多个模板函数，使用my_is_void会方便很多。
 
 库里面还有其他的例子，判断是否是其他类型、稍微复杂些的程序。另外，STL里面也有关于迭代器、原生指针的萃取，此处就不讨论复杂的情况，来聊聊本质。  [有关其他的萃取的文档与代码](./c++/doc/traits.md)
 
